@@ -1,0 +1,36 @@
+{% extends 'config/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class = "container text-center">
+        <h1>Топ книг недели</h1>
+        <p class="lead">Самые популярные книги по версии наших читателей</p>
+        <div class="badge bg-warning text-dark fs-6">
+            Обновляется каждую неделю!
+        </div>
+        <hr>
+
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% else %}
+            <div class="row">
+            {% for book in top %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text">Автор: {{ book.author }}</p>
+
+                            <a href="{{ book.online_link }}" class="btn btn-primary">Читать онлайн</a>
+                            <a href="{{ book.order_link }}" class="btn btn-success">Заказать</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
