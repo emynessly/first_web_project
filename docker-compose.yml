@@ -1,0 +1,25 @@
+services:
+    db:
+        image: postgres:16-alpine
+        restart: always
+        container_name: first_web_project_db
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        env_file:
+            - .env
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "${DB_PORT}:5432"
+        command: >
+            sh -c "echo 'host all all 0.0.0.0/0 md5' >> /var/lib/postgresql/data/pg_hba.conf && docker-entrypoint.sh postgres"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    pg_data:
