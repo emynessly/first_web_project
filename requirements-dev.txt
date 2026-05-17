@@ -6,3 +6,4 @@ black>=24.0
 flake8>=7.0
 ipython>=8.0
 pre-commit>=3.0
+django-stubs[compatible-mypy]>=6.0

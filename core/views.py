@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Book
 
 def top(request):
     top = [
@@ -19,3 +20,12 @@ def index(request):
             'Добавляйте книги в избранное, оставляйте отзывы и находите новые истории для души.'
     }
     return render(request, 'core/index.html', context)
+
+def catalog(request):
+    books = Book.objects.all()
+    
+    context = {
+        'title': 'Каталог Книг',
+        'books': books,
+    }
+    return render(request, 'core/catalog.html', context)

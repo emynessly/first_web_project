@@ -14,7 +14,7 @@ class Author(models.Model):
     
 class Book(models.Model):
     name = models.CharField(max_length=256, null=False, blank=False)
-    publish_year = models.PositiveIntegerField(null=False, blank=False)
+    publish_year = models.PositiveIntegerField(null=False, blank=False, verbose_name="Год издания")
     author = models.ForeignKey(
         Author,
         on_delete=models.CASCADE,
@@ -34,11 +34,6 @@ class Book(models.Model):
         verbose_name="Стоимость",
         null=True,
         blank=True
-    )
-    
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата создания"
     )
     
     class Meta:

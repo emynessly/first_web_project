@@ -1,0 +1,40 @@
+{% extends 'config/base.html' %}
+
+{% block title %}Каталог книг{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Каталог книг</h1>
+    
+    <div class="row">
+        {% for book in books %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="https://placehold.co/300x50" class="card-img-top img-thumbnail" alt="{{ book.name }}">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ book.name }}</h4>
+                        <p class="card-text">
+                            <strong>Автор:</strong> {{ book.author.name }}
+                        </p>
+                        <p class="card-text">
+                            {{ book.description|truncatewords:20 }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Цена:</strong> {{ book.price }} руб.
+                        </p>
+                        <button type="button" class="btn btn-primary">Подробнее</button>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5">
+                    <h3>Чувак, ты думал что-то здесь будет?</h3>
+                    <p class="mb-0">Зайди позже</p>
+                    <a href="/admin/" class="btn btn-primary mt-3">Добавить книгу через админку</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
