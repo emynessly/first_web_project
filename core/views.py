@@ -1,5 +1,7 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from .models import Book
+from .forms import FeedbackForm
 
 def top(request):
     top = [
@@ -20,6 +22,30 @@ def index(request):
             'Добавляйте книги в избранное, оставляйте отзывы и находите новые истории для души.'
     }
     return render(request, 'core/index.html', context)
+
+def contact(request):    
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            email = form.cleaned_data['email']
+            text = form.cleaned_data['text']
+            
+            print("=" * 20)
+            print("Новое сообщение:")
+            print(f"Тема: {subject}")
+            print(f"Email: {email}")
+            print(f"Сообщение: {text}")
+            print("=" * 20)
+            return redirect('core:index')
+    else:
+        form = FeedbackForm()
+    
+    context = {
+        'form': form,
+        'title': 'Обратная связь'
+    }
+    return render(request, 'core/contact.html', context)
 
 def catalog(request):
     books = Book.objects.all()
