@@ -12,7 +12,9 @@
                 <div class="card h-100">
                     <img src="https://placehold.co/300x50" class="card-img-top img-thumbnail" alt="{{ book.name }}">
                     <div class="card-body">
-                        <h4 class="card-title">{{ book.name }}</h4>
+                        <a href="{{ book.get_absolute_url }}" class="text-decoration-none">
+                            <h4 class="card-title text-primary">{{ book.name }}</h4>
+                        </a>
                         <p class="card-text">
                             <strong>Автор:</strong> {{ book.author.name }}
                         </p>
@@ -22,7 +24,7 @@
                         <p class="card-text">
                             <strong>Цена:</strong> {{ book.price }} руб.
                         </p>
-                        <button type="button" class="btn btn-primary">Подробнее</button>
+                        <a href="{{ book.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
                     </div>
                 </div>
             </div>

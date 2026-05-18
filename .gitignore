@@ -5,3 +5,4 @@ __pycache__/
 *.png
 *.sqlite3
 .env
+backup.json

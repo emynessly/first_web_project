@@ -1,9 +1,7 @@
 from django.urls import path
 from django.views.generic import RedirectView
 
-from core.views import index
-from core.views import top
-from core.views import catalog
+from core.views import index, top, catalog, book_detail
 
 app_name = 'core'
 
@@ -12,4 +10,5 @@ urlpatterns = [
     path('top/', top, name='top'),
     path('top.html', RedirectView.as_view(url='/top/', permanent=True), name='top_redirect'),
     path('catalog/', catalog, name='catalog'),
+    path('book/<int:pk>/', book_detail, name='book_detail'),
 ]
