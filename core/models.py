@@ -13,6 +13,16 @@ class Author(models.Model):
     def __str__(self) -> str:
         return self.name
     
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True, verbose_name="Название тега")
+    
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
+        ordering = ("name",)
+        
+    def __str__(self):
+        return self.name
     
 class Book(models.Model):
     name = models.CharField(max_length=256, null=False, blank=False)
@@ -46,6 +56,20 @@ class Book(models.Model):
         blank=True,
         related_name="created_books",
         verbose_name="Кто добавил"
+    )
+    
+    image = models.ImageField(
+        upload_to='books/covers/',
+        blank=True,
+        null=True,
+        verbose_name="Обложка книги"
+    )
+    
+    tags = models.ManyToManyField(
+        Tag,
+        blank=True,
+        related_name="books",
+        verbose_name="Теги"
     )
     
     class Meta:

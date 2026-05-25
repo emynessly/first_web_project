@@ -11,7 +11,7 @@
                     <h3 class="mb-0">{{ title }}</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         
                         <div class="mb-3">
@@ -34,6 +34,16 @@
                             {{ form.price }}
                         </div>
                         
+                        <div class="mb-3">
+                            <label class="form-label">Обложка книги</label>
+                            {{ form.image }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Теги</label>
+                            {{ form.tags }}
+                        </div>
+
                         <button type="submit" class="btn btn-success">
                             Сохранить
                         </button>

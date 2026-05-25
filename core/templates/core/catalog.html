@@ -5,18 +5,31 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center mb-4">Каталог книг</h1>
-    
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'core:book_create' %}" class="btn btn-success">+ Добавить книгу</a>
+    </div>
     <div class="row">
         {% for book in books %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="https://placehold.co/300x50" class="card-img-top img-thumbnail" alt="{{ book.name }}">
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" class="card-img-top img-thumbnail"
+                             alt="{{ book.name }}" style="height: 600px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://placehold.co/300x200?text={{ book.name|urlencode }}"
+                             class="card-img-top img-thumbnail"
+                             alt="{{ book.name }}" style="height: 200px; object-fit: cover;">
+                    {% endif %}
+                    
                     <div class="card-body">
                         <a href="{{ book.get_absolute_url }}" class="text-decoration-none">
                             <h4 class="card-title text-primary">{{ book.name }}</h4>
                         </a>
                         <p class="card-text">
                             <strong>Автор:</strong> {{ book.author.name }}
+                        </p>
+                        <p class="card-text">
+                            <strong>Добавил:</strong> {{ book.writer.username|default:"Неизвестно" }}
                         </p>
                         <p class="card-text">
                             {{ book.description|truncatewords:20 }}
