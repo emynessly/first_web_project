@@ -98,6 +98,11 @@
                         <a href="{% url 'core:book_edit' pk=book.pk %}" class="btn btn-warning btn-lg">
                             Редактировать
                         </a>
+                        {% if user == book.writer or user.is_superuser %}
+                            <a href="{% url 'core:book_delete' pk=book.pk %}" class="btn btn-danger btn-lg">
+                                Удалить
+                            </a>
+                        {% endif %}
                         <a href="{% url 'core:catalog' %}" class="btn btn-secondary btn-lg">
                             Назад к каталогу
                         </a>

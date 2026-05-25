@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import login
 from django.contrib import messages
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Book
 from .forms import FeedbackForm, BookForm, CommentForm
 
@@ -51,66 +53,93 @@ def contact(request):
     }
     return render(request, 'core/contact.html', context)
 
-def catalog(request):
-    books = Book.objects.all()
+class CatalogListView(ListView):
+    model = Book
+    template_name = 'core/catalog.html'
+    context_object_name = 'books'
+    ordering = ['-publish_year']
     
-    context = {
-        'title': 'Каталог Книг',
-        'books': books,
-    }
-    return render(request, 'core/catalog.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Каталог Книг'
+        return context
 
-def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'core/book_detail.html'
+    context_object_name = 'book'
     
-    context = {
-        'book': book,
-        'comment_form': CommentForm(),
-    }
-    return render(request, 'core/book_detail.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
 
-@login_required
-def book_create(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            book = form.save(commit=False)
-            book.writer = request.user
-            book.save()
-            messages.success(request, f'Книга "{book.name}" успешно добавлена!')
-            return redirect('core:book_detail', pk=book.pk)
-        else:
-            messages.error(request, 'Ошибка при добавлении книги.')
-    else:
-        form = BookForm()
+class BookCreateView(LoginRequiredMixin, CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'core/book_form.html'
+    success_url = reverse_lazy('core:catalog')
     
-    context = {
-        'form': form,
-        'title': 'Добавить книгу',
-    }
-    return render(request, 'core/book_form.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Добавить книгу'
+        return context
+    
+    def form_valid(self, form):
+        form.instance.writer = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, f'Книга "{form.instance.name}" успешно добавлена!')
+        return response
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка при добавлении книги.')
+        return super().form_invalid(form)
 
-@login_required
-def book_edit(request, pk):
-    book = get_object_or_404(Book, pk=pk)
+class BookUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'core/book_form.html'
     
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES, instance=book)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f'Книга "{book.name}" успешно обновлена!')
-            return redirect('core:book_detail', pk=book.pk)
-        else:
-            messages.error(request, 'Ошибка при редактировании книги.')
-    else:
-        form = BookForm(instance=book)
+    def test_func(self):
+        """Только автор книги может еe редактировать"""
+        book = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        return book.writer == self.request.user
     
-    context = {
-        'form': form,
-        'title': 'Редактировать книгу',
-        'book': book,
-    }
-    return render(request, 'core/book_form.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Редактировать книгу'
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('core:book_detail', kwargs={'pk': self.object.pk})
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'Книга "{form.instance.name}" успешно обновлена!')
+        return response
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка при редактировании книги.')
+        return super().form_invalid(form)
+    
+class BookDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Book
+    template_name = 'core/book_confirm_delete.html'
+    success_url = reverse_lazy('core:catalog')
+    
+    def test_func(self):
+        """Только автор книги может еe удалить"""
+        book = self.get_object()
+        if not book.writer:
+            return self.request.user.is_superuser
+        return self.request.user == book.writer
+    
+    def delete(self, request, *args, **kwargs):
+        book = self.get_object()
+        messages.success(request, f'Книга "{book.name}" успешно удалена!')
+        return super().delete(request, *args, **kwargs)
 
 def register(request):
     if request.method == 'POST':
