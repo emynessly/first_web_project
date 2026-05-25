@@ -57,6 +57,42 @@
                             {% endfor %}
                         </div>
                     {% endif %}
+
+                    <div class="mt-4">
+                        <h4>Комментарии ({{ book.comments.count }})</h4>
+                        
+                        {% if book.comments.all %}
+                            {% for comment in book.comments.all %}
+                                <div class="card mb-2">
+                                    <div class="card-body py-2">
+                                        <strong>{{ comment.author.username }}</strong>
+                                        <small class="text-muted"> - {{ comment.created_at|date:"d.m.Y H:i" }}</small>
+                                        <p class="mt-1 mb-0">{{ comment.text }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">Здесь пока нет комментариев. Будьте первыми!</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3">
+                        <h5>Добавить комментарий</h5>
+                        
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'core:add_comment' pk=book.pk %}">
+                                {% csrf_token %}
+                                <div class="mb-2">
+                                    {{ comment_form.text }}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Отправить</button>
+                            </form>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.
+                            </div>
+                        {% endif %}
+                    </div>
                     
                     <div class="text-center mt-4">
                         <a href="{% url 'core:book_edit' pk=book.pk %}" class="btn btn-warning btn-lg">

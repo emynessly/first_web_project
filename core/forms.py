@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book
+from .models import Book, Comment
 
 class FeedbackForm(forms.Form):
     subject = forms.CharField(
@@ -30,4 +30,18 @@ class BookForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'tags': forms.SelectMultiple(attrs={'class': 'form-select'}),
+        }
+        
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control', 'rows': 4, 'placeholder': 'Напишите ваш комментарий...'
+            }),
+        }
+        labels = {
+            'text': 'Ваш комментарий',
         }

@@ -82,3 +82,32 @@ class Book(models.Model):
     
     def get_absolute_url(self):
         return reverse('core:book_detail', kwargs={'pk': self.pk})
+    
+class Comment(models.Model):
+    text = models.TextField(
+        verbose_name="Текст комментария"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания"
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name="Автор"
+    )
+    post = models.ForeignKey(
+        'Book',
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name="Книга"
+    )
+    
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+        ordering = ('-created_at',)
+        
+    def __str__(self):
+        return f"Комментарий от {self.author.username} к {self.post.name}"
