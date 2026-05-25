@@ -20,9 +20,25 @@
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Войти</a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link">Привет, {{ user.username }}!</span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link" style="display: inline; border: none; background: none;">Выйти</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'login' %}">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'core:register' %}">Регистрация</a>
+                    </li>
+                {% endif %}
+
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'core:contact' %}">Связь с нами</a>
                 </li>

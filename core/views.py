@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from .models import Book
 from .forms import FeedbackForm, BookForm
 
@@ -64,11 +67,14 @@ def book_detail(request, pk):
     }
     return render(request, 'core/book_detail.html', context)
 
+@login_required
 def book_create(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
         if form.is_valid():
-            book = form.save()
+            book = form.save(commit=False)
+            book.writer = request.user
+            book.save()
             return redirect('core:book_detail', pk=book.pk)
     else:
         form = BookForm()
@@ -79,6 +85,7 @@ def book_create(request):
     }
     return render(request, 'core/book_form.html', context)
 
+@login_required
 def book_edit(request, pk):
     book = get_object_or_404(Book, pk=pk)
     
@@ -96,3 +103,19 @@ def book_edit(request, pk):
         'book': book,
     }
     return render(request, 'core/book_form.html', context)
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('core:index')
+    else:
+        form = UserCreationForm()
+    
+    context = {
+        'form': form,
+        'title': 'Регистрация',
+    }
+    return render(request, 'core/register.html', context)

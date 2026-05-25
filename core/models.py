@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 
 class Author(models.Model):
     name = models.CharField(max_length=256, null=False, blank=False)
@@ -17,10 +18,11 @@ class Book(models.Model):
     name = models.CharField(max_length=256, null=False, blank=False)
     publish_year = models.PositiveIntegerField(null=False, blank=False, verbose_name="Год издания")
     author = models.ForeignKey(
-        Author,
+        'Author',
         on_delete=models.CASCADE,
         null=True,
-        related_name="books"
+        related_name="books",
+        verbose_name="Автор"
     )
     
     description = models.TextField(
@@ -35,6 +37,15 @@ class Book(models.Model):
         verbose_name="Стоимость",
         null=True,
         blank=True
+    )
+    
+    writer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_books",
+        verbose_name="Кто добавил"
     )
     
     class Meta:

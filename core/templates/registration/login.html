@@ -1,0 +1,44 @@
+{% extends 'config/base.html' %}
+
+{% block title %}Вход на сайт{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card mt-5">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Вход</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Имя пользователя</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    </form>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger mt-3">
+                            Неверное имя пользователя или пароль
+                        </div>
+                    {% endif %}
+                    
+                    <p class="mt-3 text-center">
+                        Нет аккаунта? <a href="{% url 'core:register' %}">Зарегистрироваться</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
