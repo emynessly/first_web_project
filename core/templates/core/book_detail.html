@@ -37,13 +37,17 @@
                         </tr>
                         {% endif %}
                         <tr>
-                            <th>Полное описание:</th>
+                            <th>Описание:</th>
                             <td>{{ book.description|default:"Описание отсутствует"|linebreaks }}</td>
                         </tr>
                     </table>
+                    
                     <div class="text-center mt-4">
+                        <a href="{% url 'core:book_edit' pk=book.pk %}" class="btn btn-warning btn-lg">
+                            Редактировать
+                        </a>
                         <a href="{% url 'core:catalog' %}" class="btn btn-secondary btn-lg">
-                            ← Назад к каталогу
+                            Назад к каталогу
                         </a>
                     </div>
                 </div>

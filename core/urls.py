@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import RedirectView
 
-from core.views import index, top, catalog, book_detail, contact
+from core.views import index, top, catalog, book_detail, contact, book_create, book_edit
 
 app_name = 'core'
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('catalog/', catalog, name='catalog'),
     path('book/<int:pk>/', book_detail, name='book_detail'),
     path('contact/', contact, name='contact'),
+    path('book/create/', book_create, name='book_create'),
+    path('book/<int:pk>/edit/', book_edit, name='book_edit'),
 ]

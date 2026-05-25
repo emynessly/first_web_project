@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .models import Book
-from .forms import FeedbackForm
+from .forms import FeedbackForm, BookForm
 
 def top(request):
     top = [
@@ -63,3 +63,36 @@ def book_detail(request, pk):
         'book': book,
     }
     return render(request, 'core/book_detail.html', context)
+
+def book_create(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            book = form.save()
+            return redirect('core:book_detail', pk=book.pk)
+    else:
+        form = BookForm()
+    
+    context = {
+        'form': form,
+        'title': 'Добавить книгу',
+    }
+    return render(request, 'core/book_form.html', context)
+
+def book_edit(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('core:book_detail', pk=book.pk)
+    else:
+        form = BookForm(instance=book)
+    
+    context = {
+        'form': form,
+        'title': 'Редактировать книгу',
+        'book': book,
+    }
+    return render(request, 'core/book_form.html', context)

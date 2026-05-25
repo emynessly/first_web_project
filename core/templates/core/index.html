@@ -7,9 +7,9 @@
     <div class = "container text-center">
         <h1>{{ title }}</h1>
         <p>{{ welcome_text|safe }}</p>
-        <button type="button" class="btn btn-primary btn-lg">Начать</button>
-        <button type="button" class="btn btn-primary btn-lg">Купить</button>
-        <button type="button" class="btn btn-primary btn-lg">Читать</button>
+        <a href="{% url 'core:catalog' %}" class="btn btn-primary">Купить</a>
+        <a href="{% url 'core:catalog' %}" class="btn btn-primary">Читать</a>
+        <a href="{% url 'core:book_create' %}" class="btn btn-primary">Добавить книгу</a>
     </div>
     <br>
     <div class="container">
@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <h4 class="card-title">Товары</h4>
                         <p>Ознакомьтесь с ассортиментом книг: от классики до современных бестселлеров</p>
-                        <button type="button" class="btn btn-primary">Смотреть</button>
+                        <a href="{% url 'core:catalog' %}" class="btn btn-primary">Смотреть</a>
                     </div>
                 </div>
             </div>
